@@ -1820,6 +1820,8 @@ read_header(struct archive_read *a, struct archive_entry *entry,
   rar->valid = 1;
   rar->is_ppmd_block = 0;
   rar->start_new_table = 1;
+  /* Later PPMd blocks keep this escape character unless they set one. */
+  rar->ppmd_escape = 2;
   free(rar->unp_buffer);
   rar->unp_buffer = NULL;
   rar->unp_offset = 0;
@@ -2344,8 +2346,6 @@ parse_codes(struct archive_read *a)
       rar->ppmd_escape = rar->ppmd7_context.InitEsc = rar_br_bits(br, 8);
       rar_br_consume(br, 8);
     }
-    else
-      rar->ppmd_escape = 2;
 
     if (ppmd_flags & 0x20)
     {
